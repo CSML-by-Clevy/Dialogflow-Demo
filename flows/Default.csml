@@ -1,0 +1,7 @@
+// This is the default flow and acts as a "catch-all" that handles
+// any request that was not understood otherwise. Use it to explain
+// what your bot is about!
+start:
+  say "Hello! I help you retrieve or set your username."
+  say "What would you like to know?"
+  goto end

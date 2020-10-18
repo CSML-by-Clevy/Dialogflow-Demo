@@ -1,0 +1,54 @@
+/**
+ * Given an incoming event, find whether any type of `name` entity has been set
+ * @returns {Null|String}
+ */
+fn getNameEntity(event):
+  do entities = event._nlp_result.parameters.fields
+  if (entities) {
+    if (entities["given-name"].stringValue) return entities["given-name"].stringValue
+    if (entities["last-name"].stringValue) return entities["last-name"].stringValue
+    if (entities["nick-name"].stringValue) return entities["nick-name"].stringValue
+  }
+  return Null
+
+start:
+  // We know that the matched intent for this flow requires us to change the user's name,
+  // but we need to check if the event triggering this flow has one of the `name` entities set
+  remember newname = getNameEntity(event)
+
+  // The user did not give us their new name, we need to specifically ask for it
+  if (!newname) goto askForNameInput
+
+  // Otherwise we can just ask for confirmation that we understood it right
+  // and skip the "what's your new name" part
+  goto confirmNewName
+
+confirmNewName:
+  say Question(
+    "I understand that you want to set your username to {{newname}}, is that correct?",
+    button_type="quick_reply",
+    buttons=[
+      Button("Yes") as btn_yes,
+      Button("No") as btn_no
+    ]
+  )
+  hold
+
+  // User did confirm that we got it right
+  if (event.match(btn_yes)) {
+    say "OK, I'm setting your new name to: {{newname}}!"
+    // don't forget to clear the newname for next time!
+    remember name = newname
+    remember newname = Null
+    goto end
+  }
+
+  // User did not confirm, we need to ask for the name again
+  say "I'm sorry that I misunderstood..."
+  goto askForNameInput
+
+askForNameInput:
+  say "What name do you want us to remember?"
+  hold
+  remember newname = event
+  goto confirmNewName

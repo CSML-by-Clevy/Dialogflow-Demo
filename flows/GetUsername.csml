@@ -1,0 +1,38 @@
+start:
+  // We must first make sure that we know the user's name upon first connection
+  if (!name) {
+    say "I don't know yet! How about you tell me first?"
+    goto initialSetName
+  }
+  say "Oh, I know that! Your name is {{name}}."
+  goto feedback
+
+initialSetName:
+  hold
+  remember name = event
+  say "OK! From now on I will call you {{name}}."
+  goto end
+
+feedback:
+  say Question(
+    "Do you like your name?",
+    button_type="quick_reply",
+    buttons=[
+      Button("Yay!", accepts=["name.user.feedback.good"]) as btn_yes,
+      Button("Meh...", accepts=["name.user.feedback.bad"]) as btn_no,
+    ]
+  )
+  hold
+
+  if (event.match(btn_yes)) {
+    say "I'm glad you like it!"
+    goto end
+  }
+  else if (event.match(btn_no)) {
+    say "Oh, I'm sorry to hear that!"
+    goto end
+  }
+  else {
+    say "I'm sorry, I didn't get that."
+    goto feedback
+  }

@@ -1,0 +1,29 @@
+{
+  "id": "c6d87d92-415a-4941-9cd1-da12e9469947",
+  "name": "Dialogflow",
+  "description": null,
+  "default_flow": "Default",
+  "flows": [
+    {
+      "name": "Default",
+      "description": "Default custom flow",
+      "commands": []
+    },
+    {
+      "name": "GetUsername",
+      "commands": [
+        "name.user.get"
+      ]
+    },
+    {
+      "name": "SaveUsername",
+      "commands": [
+        "name.user.change",
+        "name.user.save"
+      ]
+    }
+  ],
+  "files": [],
+  "functions": [],
+  "apps": []
+}
